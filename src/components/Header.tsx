@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Menu, X } from "lucide-react";
+import { Menu, X, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const Header = () => {
@@ -66,6 +66,11 @@ const Header = () => {
             >
               Contacto
             </Button>
+            <a href="https://www.google.com/maps" target="_blank" rel="noopener noreferrer">
+              <Button variant="outline" className="ml-2 lg:ml-4">
+                <MapPin className="w-4 h-4" />
+              </Button>
+            </a>
           </nav>
 
           {/* Mobile Menu Button */}
@@ -120,6 +125,12 @@ const Header = () => {
               <Button onClick={() => scrollToSection("contacto")} className="justify-start">
                 Contacto
               </Button>
+              <a href="https://www.google.com/maps" target="_blank" rel="noopener noreferrer">
+                <Button variant="outline" className="justify-start">
+                  <MapPin className="w-4 h-4 mr-2" />
+                  Ubicación
+                </Button>
+              </a>
             </div>
           </nav>
         )}
