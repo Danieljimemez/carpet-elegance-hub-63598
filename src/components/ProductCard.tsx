@@ -24,7 +24,6 @@ const ProductCard = ({ image, name, size, price, onViewDetails }: ProductCardPro
           {name}
         </h3>
         <p className="text-sm text-muted-foreground mb-1">Tamaño: {size}</p>
-        <p className="text-xl sm:text-2xl font-bold text-primary mt-3">{price}</p>
       </CardContent>
       <CardFooter className="p-4 sm:p-6 pt-0">
         <Button

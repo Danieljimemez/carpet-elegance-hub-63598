@@ -76,7 +76,6 @@ const WeeklyUpdates = () => {
                 <div className="flex justify-between items-center">
                   <div>
                     <p className="text-sm text-muted-foreground">Tamaño: {product.size}</p>
-                    <p className="text-2xl font-bold text-primary mt-1">{product.price}</p>
                   </div>
                 </div>
               </CardContent>
@@ -84,11 +83,6 @@ const WeeklyUpdates = () => {
           ))}
         </div>
 
-        <div className="mt-12 text-center">
-          <p className="text-sm text-muted-foreground italic">
-            * Precios y disponibilidad actualizados semanalmente
-          </p>
-        </div>
       </div>
     </section>
   );
