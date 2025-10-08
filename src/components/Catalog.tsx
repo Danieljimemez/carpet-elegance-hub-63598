@@ -1,61 +1,33 @@
 import ProductCard from "./ProductCard";
 import { toast } from "sonner";
-import rugModern from "@/assets/rug-modern-1.jpg";
-import rugPersian from "@/assets/rug-persian-1.jpg";
-import rugMinimal from "@/assets/rug-minimal-1.jpg";
-import rugShag from "@/assets/rug-shag-1.jpg";
-import rugBoho from "@/assets/rug-boho-1.jpg";
-import rugContemporary from "@/assets/rug-contemporary-1.jpg";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
-const products = [
-  {
-    id: 1,
-    image: rugModern,
-    name: "Geométrica Moderna",
-    size: "200 x 300 cm",
-    price: "$3,499",
-  },
-  {
-    id: 2,
-    image: rugPersian,
-    name: "Persa Tradicional",
-    size: "250 x 350 cm",
-    price: "$5,999",
-  },
-  {
-    id: 3,
-    image: rugMinimal,
-    name: "Minimalista Elegante",
-    size: "160 x 230 cm",
-    price: "$2,799",
-  },
-  {
-    id: 4,
-    image: rugShag,
-    name: "Shag Luxury",
-    size: "200 x 300 cm",
-    price: "$4,299",
-  },
-  {
-    id: 5,
-    image: rugBoho,
-    name: "Boho Étnica",
-    size: "180 x 270 cm",
-    price: "$3,199",
-  },
-  {
-    id: 6,
-    image: rugContemporary,
-    name: "Contemporánea Acuarela",
-    size: "200 x 290 cm",
-    price: "$3,899",
-  },
-];
+interface Herramienta {
+  id: string;
+  nombre: string;
+  precio: string;
+  descripcion: string | null;
+  imagen_url: string | null;
+}
 
 const Catalog = () => {
-  const handleViewDetails = (product: typeof products[0]) => {
-    toast.success(`Ver detalles de ${product.name}`, {
-      description: "Próximamente podrás ver más información sobre este producto.",
+  const { data: herramientas, isLoading } = useQuery({
+    queryKey: ['herramientas'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('herramientas')
+        .select('*')
+        .order('created_at', { ascending: false });
+      
+      if (error) throw error;
+      return data as Herramienta[];
+    },
+  });
+
+  const handleViewDetails = (product: Herramienta) => {
+    toast.success(`Ver detalles de ${product.nombre}`, {
+      description: product.descripcion || "Próximamente podrás ver más información sobre este producto.",
     });
   };
 
@@ -71,23 +43,31 @@ const Catalog = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 lg:gap-10">
-          {products.map((product, index) => (
-            <div
-              key={product.id}
-              className="animate-fade-in-up"
-              style={{ animationDelay: `${index * 100}ms` }}
-            >
-              <ProductCard
-                image={product.image}
-                name={product.name}
-                size={product.size}
-                price={product.price}
-                onViewDetails={() => handleViewDetails(product)}
-              />
-            </div>
-          ))}
-        </div>
+        {isLoading ? (
+          <div className="text-center text-muted-foreground">Cargando productos...</div>
+        ) : herramientas && herramientas.length > 0 ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 lg:gap-10">
+            {herramientas.map((product, index) => (
+              <div
+                key={product.id}
+                className="animate-fade-in-up"
+                style={{ animationDelay: `${index * 100}ms` }}
+              >
+                <ProductCard
+                  image={product.imagen_url || "/placeholder.svg"}
+                  name={product.nombre}
+                  size={product.descripcion || ""}
+                  price={product.precio}
+                  onViewDetails={() => handleViewDetails(product)}
+                />
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="text-center text-muted-foreground">
+            No hay productos disponibles. Agrega productos desde tu base de datos Supabase.
+          </div>
+        )}
       </div>
     </section>
   );
