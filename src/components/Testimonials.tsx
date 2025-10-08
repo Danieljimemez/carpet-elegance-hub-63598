@@ -62,6 +62,7 @@ const Testimonials = () => {
       .insert([data]);
 
     if (error) {
+      console.error("Error inserting testimonial:", error);
       toast.error("Error al enviar el testimonio. Inténtalo de nuevo.");
       return;
     }
