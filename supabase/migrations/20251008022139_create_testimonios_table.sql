@@ -17,11 +17,11 @@ ON public.testimonios
 FOR SELECT
 USING (true);
 
--- Create policy for authenticated users to insert
-CREATE POLICY "Authenticated users can insert testimonios"
+-- Create policy for public insert
+CREATE POLICY "Anyone can insert testimonios"
 ON public.testimonios
 FOR INSERT
-WITH CHECK (auth.role() = 'authenticated');
+WITH CHECK (true);
 
 -- Create index for better performance
 CREATE INDEX idx_testimonios_created_at ON public.testimonios(created_at DESC);
