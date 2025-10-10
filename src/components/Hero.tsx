@@ -28,7 +28,7 @@ const Hero = () => {
             Tu espacio, tu estilo
           </h2>
           <p className="text-lg sm:text-xl md:text-2xl text-foreground/90 mb-8 max-w-2xl mx-auto font-light leading-relaxed">
-            Transforma tus espacios con elegancia y calidez. Descubre nuestras alfombras exclusivas.
+            Transforma tus espacios con elegancia y calidez. Descubre nuestras alfombras, muebles y cortinas exclusivas.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <Button

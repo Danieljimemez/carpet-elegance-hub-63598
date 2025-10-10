@@ -15,7 +15,7 @@ const Catalog = () => {
   const { data: herramientas, isLoading } = useQuery({
     queryKey: ['herramientas'],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('herramientas')
         .select('*')
         .order('created_at', { ascending: false });
@@ -36,10 +36,10 @@ const Catalog = () => {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12 sm:mb-16 animate-fade-in">
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-bold text-foreground mb-4">
-            Catálogo de Alfombras
+            Nuestro Catálogo
           </h2>
           <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto">
-            Explora nuestra selección de alfombras exclusivas, diseñadas para transformar cualquier espacio.
+            Explora nuestra selección exclusiva de alfombras, muebles y cortinas, diseñados para transformar cualquier espacio.
           </p>
         </div>
 

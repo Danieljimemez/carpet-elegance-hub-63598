@@ -33,7 +33,7 @@ const About = () => {
           </p>
           <p className="text-base sm:text-lg text-muted-foreground leading-relaxed">
             Con años de experiencia en el mundo del diseño de interiores, ofrecemos una colección
-            cuidadosamente seleccionada de alfombras que reflejan calidad artesanal y estilo contemporáneo.
+            cuidadosamente seleccionada de alfombras, muebles y cortinas que reflejan calidad artesanal y estilo contemporáneo.
             Cada pieza es elegida pensando en crear ambientes acogedores y sofisticados.
           </p>
         </div>
