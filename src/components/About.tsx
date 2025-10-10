@@ -28,12 +28,12 @@ const About = () => {
             Sobre Nosotros
           </h2>
           <p className="text-base sm:text-lg text-muted-foreground leading-relaxed mb-6">
-            En <span className="font-semibold text-primary">Alfombras Elegantes</span>, nos apasiona transformar espacios
+            En <span className="font-semibold text-primary">Muebles Rangel</span>, nos apasiona transformar espacios
             con piezas únicas que combinan elegancia, confort y funcionalidad.
           </p>
           <p className="text-base sm:text-lg text-muted-foreground leading-relaxed">
             Con años de experiencia en el mundo del diseño de interiores, ofrecemos una colección
-            cuidadosamente seleccionada de alfombras que reflejan calidad artesanal y estilo contemporáneo.
+            cuidadosamente seleccionada de alfombras, muebles y cortinas que reflejan calidad artesanal y estilo contemporáneo.
             Cada pieza es elegida pensando en crear ambientes acogedores y sofisticados.
           </p>
         </div>
