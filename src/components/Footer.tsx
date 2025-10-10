@@ -8,7 +8,7 @@ const Footer = () => {
           {/* Brand */}
           <div>
             <h3 className="text-2xl font-serif font-bold text-primary mb-4">
-              Alfombras Elegantes
+              Muebles Rangel
             </h3>
             <p className="text-sm text-muted-foreground leading-relaxed">
               Transformando espacios con elegancia y calidez desde hace años. Tu tienda de confianza para alfombras decorativas de calidad premium.
@@ -115,7 +115,7 @@ const Footer = () => {
         {/* Bottom */}
         <div className="border-t border-border mt-12 pt-8 flex flex-col sm:flex-row justify-between items-center gap-4">
           <p className="text-sm text-muted-foreground">
-            © {new Date().getFullYear()} Alfombras Elegantes. Todos los derechos reservados.
+            © {new Date().getFullYear()} Muebles Rangel. Todos los derechos reservados.
           </p>
           <a
             href="#privacidad"
