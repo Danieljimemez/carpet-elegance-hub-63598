@@ -19,7 +19,7 @@ const Header = () => {
         <div className="flex items-center justify-between h-16 lg:h-20">
           <div className="flex-shrink-0">
             <h1 className="text-xl sm:text-2xl lg:text-3xl font-serif font-bold text-primary">
-              Alfombras Elegantes
+              Muebles Rangel
             </h1>
           </div>
 

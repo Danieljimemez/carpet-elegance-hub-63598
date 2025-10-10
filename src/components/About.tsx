@@ -28,7 +28,7 @@ const About = () => {
             Sobre Nosotros
           </h2>
           <p className="text-base sm:text-lg text-muted-foreground leading-relaxed mb-6">
-            En <span className="font-semibold text-primary">Alfombras Elegantes</span>, nos apasiona transformar espacios
+            En <span className="font-semibold text-primary">Muebles Rangel</span>, nos apasiona transformar espacios
             con piezas únicas que combinan elegancia, confort y funcionalidad.
           </p>
           <p className="text-base sm:text-lg text-muted-foreground leading-relaxed">
