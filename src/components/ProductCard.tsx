@@ -5,11 +5,10 @@ interface ProductCardProps {
   image: string;
   name: string;
   size: string;
-  price: string;
   onViewDetails: () => void;
 }
 
-const ProductCard = ({ image, name, size, price, onViewDetails }: ProductCardProps) => {
+const ProductCard = ({ image, name, size, onViewDetails }: ProductCardProps) => {
   return (
     <Card className="group overflow-hidden shadow-soft hover:shadow-elevated transition-smooth bg-card border-border">
       <div className="relative aspect-square overflow-hidden bg-muted">

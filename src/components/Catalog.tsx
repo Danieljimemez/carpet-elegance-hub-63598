@@ -6,7 +6,6 @@ import { supabase } from "@/integrations/supabase/client";
 interface Herramienta {
   id: string;
   nombre: string;
-  precio: string;
   descripcion: string | null;
   imagen_url: string | null;
 }
@@ -57,7 +56,6 @@ const Catalog = () => {
                   image={product.imagen_url || "/placeholder.svg"}
                   name={product.nombre}
                   size={product.descripcion || ""}
-                  price={product.precio}
                   onViewDetails={() => handleViewDetails(product)}
                 />
               </div>

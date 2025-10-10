@@ -14,7 +14,122 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      categories: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          image_url: string | null
+          name: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          name: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          name?: string
+        }
+        Relationships: []
+      }
+      contacts: {
+        Row: {
+          created_at: string
+          custom_size: string | null
+          email: string
+          id: string
+          message: string
+          name: string
+          phone: string | null
+        }
+        Insert: {
+          created_at?: string
+          custom_size?: string | null
+          email: string
+          id?: string
+          message: string
+          name: string
+          phone?: string | null
+        }
+        Update: {
+          created_at?: string
+          custom_size?: string | null
+          email?: string
+          id?: string
+          message?: string
+          name?: string
+          phone?: string | null
+        }
+        Relationships: []
+      }
+      herramientas: {
+        Row: {
+          category_id: string | null
+          created_at: string
+          descripcion: string | null
+          id: string
+          imagen_url: string | null
+          nombre: string
+        }
+        Insert: {
+          category_id?: string | null
+          created_at?: string
+          descripcion?: string | null
+          id?: string
+          imagen_url?: string | null
+          nombre: string
+        }
+        Update: {
+          category_id?: string | null
+          created_at?: string
+          descripcion?: string | null
+          id?: string
+          imagen_url?: string | null
+          nombre?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "herramientas_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      testimonios: {
+        Row: {
+          calificacion: number
+          comentario: string
+          created_at: string
+          id: string
+          nombre: string
+          rol: string
+        }
+        Insert: {
+          calificacion: number
+          comentario: string
+          created_at?: string
+          id?: string
+          nombre: string
+          rol: string
+        }
+        Update: {
+          calificacion?: number
+          comentario?: string
+          created_at?: string
+          id?: string
+          nombre?: string
+          rol?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

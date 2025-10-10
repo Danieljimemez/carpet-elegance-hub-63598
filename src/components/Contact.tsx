@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -14,12 +15,29 @@ const Contact = () => {
     customSize: "",
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     // Basic validation
     if (!formData.name || !formData.email || !formData.message) {
       toast.error("Por favor completa todos los campos requeridos");
+      return;
+    }
+
+    // Save to database
+    const { error } = await supabase
+      .from('contacts')
+      .insert([{
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        message: formData.message,
+        custom_size: formData.customSize,
+      }]);
+
+    if (error) {
+      console.error('Error saving contact:', error);
+      toast.error("Error al enviar el mensaje. Inténtalo de nuevo.");
       return;
     }
 
