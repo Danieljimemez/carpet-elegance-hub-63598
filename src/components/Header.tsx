@@ -66,7 +66,7 @@ const Header = () => {
             >
               Contacto
             </Button>
-            <a href="https://www.google.com/maps" target="_blank" rel="noopener noreferrer">
+            <a href="https://maps.app.goo.gl/gKXQML5ncSv2aS8bA" target="_blank" rel="noopener noreferrer">
               <Button variant="outline" className="ml-2 lg:ml-4">
                 <MapPin className="w-4 h-4" />
               </Button>
@@ -125,7 +125,7 @@ const Header = () => {
               <Button onClick={() => scrollToSection("contacto")} className="justify-start">
                 Contacto
               </Button>
-              <a href="https://www.google.com/maps" target="_blank" rel="noopener noreferrer">
+              <a href="https://maps.app.goo.gl/gKXQML5ncSv2aS8bA" target="_blank" rel="noopener noreferrer">
                 <Button variant="outline" className="justify-start">
                   <MapPin className="w-4 h-4 mr-2" />
                   Ubicación
