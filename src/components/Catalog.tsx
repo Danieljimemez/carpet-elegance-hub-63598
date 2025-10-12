@@ -2,6 +2,8 @@ import ProductCard from "./ProductCard";
 import { toast } from "sonner";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useState } from "react";
 
 interface Herramienta {
   id: string;
@@ -11,24 +13,63 @@ interface Herramienta {
 }
 
 const Catalog = () => {
-  const { data: herramientas, isLoading } = useQuery({
-    queryKey: ['herramientas'],
+  const [activeTab, setActiveTab] = useState("alfombras");
+
+  const { data: productos, isLoading } = useQuery({
+    queryKey: ['productos'],
     queryFn: async () => {
-      const { data, error } = await (supabase as any)
+      const { data, error } = await supabase
         .from('herramientas')
-        .select('*')
+        .select(`
+          *,
+          categories (
+            name
+          )
+        `)
         .order('created_at', { ascending: false });
-      
+
       if (error) throw error;
-      return data as Herramienta[];
+      return data as (Herramienta & { categories: { name: string } | null })[];
     },
   });
+
+  const filterByCategory = (categoryName: string) => {
+    if (!productos) return [];
+    return productos.filter(producto =>
+      producto.categories?.name === categoryName
+    );
+  };
 
   const handleViewDetails = (product: Herramienta) => {
     toast.success(`Ver detalles de ${product.nombre}`, {
       description: product.descripcion || "Próximamente podrás ver más información sobre este producto.",
     });
   };
+
+  const renderProductGrid = (products: (Herramienta & { categories: { name: string } | null })[]) => (
+    products && products.length > 0 ? (
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 lg:gap-10">
+        {products.map((product, index) => (
+          <div
+            key={product.id}
+            className="animate-fade-in-up"
+            style={{ animationDelay: `${index * 100}ms` }}
+          >
+            <ProductCard
+              image={product.imagen_url || "/placeholder.svg"}
+              name={product.nombre}
+              size={product.descripcion || ""}
+              onViewDetails={() => handleViewDetails(product)}
+            />
+          </div>
+        ))}
+      </div>
+    ) : (
+      <div className="text-center text-muted-foreground py-12">
+        No hay productos disponibles en esta categoría. Agrega productos desde tu base de datos Supabase.
+      </div>
+    )
+  );
 
   return (
     <section id="catalogo" className="py-16 sm:py-20 lg:py-32 bg-background">
@@ -42,30 +83,31 @@ const Catalog = () => {
           </p>
         </div>
 
-        {isLoading ? (
-          <div className="text-center text-muted-foreground">Cargando productos...</div>
-        ) : herramientas && herramientas.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 lg:gap-10">
-            {herramientas.map((product, index) => (
-              <div
-                key={product.id}
-                className="animate-fade-in-up"
-                style={{ animationDelay: `${index * 100}ms` }}
-              >
-                <ProductCard
-                  image={product.imagen_url || "/placeholder.svg"}
-                  name={product.nombre}
-                  size={product.descripcion || ""}
-                  onViewDetails={() => handleViewDetails(product)}
-                />
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div className="text-center text-muted-foreground">
-            No hay productos disponibles. Agrega productos desde tu base de datos Supabase.
-          </div>
-        )}
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <TabsList className="grid w-full grid-cols-3 max-w-md mx-auto mb-12">
+            <TabsTrigger value="alfombras">Alfombras</TabsTrigger>
+            <TabsTrigger value="muebles">Muebles</TabsTrigger>
+            <TabsTrigger value="cortinas">Cortinas</TabsTrigger>
+          </TabsList>
+
+          {isLoading ? (
+            <div className="text-center text-muted-foreground">Cargando productos...</div>
+          ) : (
+            <>
+              <TabsContent value="alfombras">
+                {renderProductGrid(filterByCategory("Alfombras"))}
+              </TabsContent>
+
+              <TabsContent value="muebles">
+                {renderProductGrid(filterByCategory("Muebles"))}
+              </TabsContent>
+
+              <TabsContent value="cortinas">
+                {renderProductGrid(filterByCategory("Cortinas"))}
+              </TabsContent>
+            </>
+          )}
+        </Tabs>
       </div>
     </section>
   );

@@ -41,6 +41,13 @@ const Header = () => {
             </Button>
             <Button
               variant="ghost"
+              onClick={() => scrollToSection("galeria")}
+              className="font-sans text-sm lg:text-base"
+            >
+              Galería
+            </Button>
+            <Button
+              variant="ghost"
               onClick={() => scrollToSection("colecciones")}
               className="font-sans text-sm lg:text-base"
             >
@@ -100,6 +107,13 @@ const Header = () => {
                 className="justify-start"
               >
                 Catálogo
+              </Button>
+              <Button
+                variant="ghost"
+                onClick={() => scrollToSection("galeria")}
+                className="justify-start"
+              >
+                Galería
               </Button>
               <Button
                 variant="ghost"

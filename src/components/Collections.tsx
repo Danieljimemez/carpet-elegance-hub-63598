@@ -1,33 +1,29 @@
 import { Card } from "@/components/ui/card";
-import rugModern from "@/assets/rug-modern-1.jpg";
-import rugPersian from "@/assets/rug-persian-1.jpg";
-import rugMinimal from "@/assets/rug-minimal-1.jpg";
-import rugBoho from "@/assets/rug-boho-1.jpg";
 
 const collections = [
   {
     id: 1,
     name: "Alfombras Modernas",
     description: "Diseños contemporáneos con líneas limpias",
-    image: rugModern,
+    image: "/alfombras/Alfombra Azul Brillante.png",
   },
   {
     id: 2,
     name: "Alfombras Persas",
     description: "Elegancia clásica y artesanía tradicional",
-    image: rugPersian,
+    image: "/alfombras/Alfombra Rojo Oscuro.png",
   },
   {
     id: 3,
     name: "Alfombras Minimalistas",
     description: "Simplicidad sofisticada para espacios modernos",
-    image: rugMinimal,
+    image: "/alfombras/Alfombra Gris Medio.png",
   },
   {
     id: 4,
     name: "Alfombras Bohemias",
     description: "Colores vibrantes y patrones étnicos",
-    image: rugBoho,
+    image: "/alfombras/Alfombra Marrón Rojizo.png",
   },
 ];
 

@@ -1,5 +1,6 @@
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
+import CarpetCarousel from "@/components/CarpetCarousel";
 import Catalog from "@/components/Catalog";
 import Collections from "@/components/Collections";
 import About from "@/components/About";
@@ -14,6 +15,7 @@ const Index = () => {
       <Header />
       <main>
         <Hero />
+        <CarpetCarousel />
         <Catalog />
         <Collections />
         <About />
