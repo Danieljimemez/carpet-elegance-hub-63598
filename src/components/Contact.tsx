@@ -25,7 +25,7 @@ const Contact = () => {
     }
 
     // Save to database
-    const { error } = await supabase
+    const { error } = await (supabase as any)
       .from('contacts')
       .insert([{
         name: formData.name,

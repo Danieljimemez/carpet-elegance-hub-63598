@@ -2,10 +2,9 @@ import Header from "@/components/Header";
 import Hero from "@/components/Hero";
 import CarpetCarousel from "@/components/CarpetCarousel";
 import Catalog from "@/components/Catalog";
-import Collections from "@/components/Collections";
 import About from "@/components/About";
 import Testimonials from "@/components/Testimonials";
-import WeeklyUpdates from "@/components/WeeklyUpdates";
+import MonthlyUpdates from "@/components/MonthlyUpdates";
 import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
 
@@ -17,10 +16,9 @@ const Index = () => {
         <Hero />
         <CarpetCarousel />
         <Catalog />
-        <Collections />
         <About />
         <Testimonials />
-        <WeeklyUpdates />
+        <MonthlyUpdates />
         <Contact />
       </main>
       <Footer />

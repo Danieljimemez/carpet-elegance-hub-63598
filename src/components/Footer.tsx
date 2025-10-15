@@ -1,4 +1,4 @@
-import { Mail, Phone, MapPin, Clock, Facebook, Instagram, Send } from "lucide-react";
+import { Mail, Phone, MapPin, Clock, Facebook, Instagram, Hash } from "lucide-react";
 
 const Footer = () => {
   return (
@@ -31,16 +31,16 @@ const Footer = () => {
               <li className="flex items-start gap-3">
                 <Phone className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
                 <a
-                  href="tel:+525512345678"
+                  href="tel:+526611234567"
                   className="text-sm text-muted-foreground hover:text-primary transition-colors"
                 >
-                  +52 55 1234 5678
+                  +52 661 123 4567
                 </a>
               </li>
               <li className="flex items-start gap-3">
                 <MapPin className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
                 <span className="text-sm text-muted-foreground">
-                  Ciudad de México, México
+                  Playas de Rosarito, México
                 </span>
               </li>
             </ul>
@@ -78,7 +78,7 @@ const Footer = () => {
           <div>
             <h4 className="text-lg font-semibold text-foreground mb-4">Síguenos</h4>
             <p className="text-sm text-muted-foreground mb-4">
-              Mantente al día con nuestras últimas colecciones y ofertas especiales.
+              Mantente al día con nuestras últimas ofertas y novedades.
             </p>
             <div className="flex gap-3">
               <a
@@ -100,13 +100,13 @@ const Footer = () => {
                 <Instagram className="w-5 h-5" />
               </a>
               <a
-                href="https://t.me"
+                href="https://tiktok.com"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-smooth"
-                aria-label="Telegram"
+                aria-label="TikTok"
               >
-                <Send className="w-5 h-5" />
+                <Hash className="w-5 h-5" />
               </a>
             </div>
           </div>

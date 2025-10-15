@@ -16,6 +16,10 @@ const ProductCard = ({ image, name, size, onViewDetails }: ProductCardProps) => 
           src={image}
           alt={name}
           className="w-full h-full object-cover group-hover:scale-110 transition-smooth"
+          onError={(e) => {
+            console.warn(`Failed to load product image: ${image}`);
+            e.currentTarget.src = "/placeholder.svg";
+          }}
         />
       </div>
       <CardContent className="p-4 sm:p-6">

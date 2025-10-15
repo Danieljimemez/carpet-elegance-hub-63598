@@ -14,7 +14,7 @@ const CarpetCarousel = () => {
   const { data: carpets, isLoading, error } = useQuery({
     queryKey: ["gallery-photos"],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from("gallery_photos")
         .select("*")
         .eq("is_active", true)
@@ -128,6 +128,11 @@ const CarpetSetCard = ({ carpets, setName }: { carpets: any[], setName: string }
           alt={currentCarpet.alt_text || currentCarpet.name}
           className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
           loading="lazy"
+          onError={(e) => {
+            console.warn(`Failed to load image: ${currentCarpet.image_url}`);
+            // Fallback to a placeholder if image fails to load
+            e.currentTarget.src = "/placeholder.svg";
+          }}
         />
 
         {/* Navigation arrows */}

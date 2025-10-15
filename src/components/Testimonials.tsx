@@ -33,16 +33,19 @@ type TestimonialForm = z.infer<typeof testimonialSchema>;
 const Testimonials = () => {
   const [showForm, setShowForm] = useState(false);
   const queryClient = useQueryClient();
+
+  // Obtener testimonials aprobados de la base de datos
   const { data: testimonials, isLoading } = useQuery({
-    queryKey: ['testimonios'],
+    queryKey: ['testimonials'],
     queryFn: async () => {
       const { data, error } = await (supabase as any)
-        .from('testimonios')
+        .from('testimonials')
         .select('*')
+        .eq('is_approved', true)
         .order('created_at', { ascending: false });
-      
+
       if (error) throw error;
-      return data as unknown as Testimonio[];
+      return data;
     },
   });
 
@@ -57,20 +60,34 @@ const Testimonials = () => {
   });
 
   const onSubmit = async (data: TestimonialForm) => {
-    const { error } = await (supabase as any)
-      .from('testimonios')
-      .insert([data]);
+    try {
+      const { error } = await (supabase as any)
+        .from('testimonials')
+        .insert([{
+          nombre: data.nombre,
+          rol: data.rol,
+          comentario: data.comentario,
+          calificacion: data.calificacion,
+          is_approved: false // Los nuevos testimonials necesitan aprobación
+        }]);
 
-    if (error) {
-      console.error("Error inserting testimonial:", error);
-      toast.error("Error al enviar el testimonio. Inténtalo de nuevo.");
-      return;
+      if (error) {
+        console.error('Error al guardar testimonial:', error);
+        toast.error("Error al enviar el testimonio. Inténtalo de nuevo.");
+        return;
+      }
+
+      toast.success("¡Gracias por tu testimonio!", {
+        description: "Se publicará después de ser revisado por nuestro equipo."
+      });
+
+      form.reset();
+      setShowForm(false);
+
+    } catch (error) {
+      console.error('Error inesperado:', error);
+      toast.error("Error inesperado. Inténtalo de nuevo.");
     }
-
-    toast.success("¡Gracias por tu testimonio! Se publicará pronto.");
-    form.reset();
-    setShowForm(false);
-    queryClient.invalidateQueries({ queryKey: ['testimonios'] });
   };
   return (
     <section id="opiniones" className="py-16 sm:py-20 lg:py-32 hero-gradient">
