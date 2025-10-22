@@ -1,8 +1,14 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Sparkles } from "lucide-react";
+import { Sparkles, Eye } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+} from "@/components/ui/dialog";
 
 // Debug temporal
 const debugQuery = useQuery({
@@ -53,6 +59,31 @@ const Carpets = () => {
       return data as CarpetItem[];
     },
   });
+
+  // State for image preview modal
+  const [previewModal, setPreviewModal] = useState<{
+    isOpen: boolean;
+    currentItem: CarpetItem | null;
+  }>({
+    isOpen: false,
+    currentItem: null,
+  });
+
+  // Function to open preview modal
+  const openPreview = (item: CarpetItem) => {
+    setPreviewModal({
+      isOpen: true,
+      currentItem: item,
+    });
+  };
+
+  // Function to close preview modal
+  const closePreview = () => {
+    setPreviewModal({
+      isOpen: false,
+      currentItem: null,
+    });
+  };
 
   return (
     <section className="py-16 sm:py-20 lg:py-32 bg-gradient-to-br from-amber-50 to-orange-50">
@@ -111,6 +142,15 @@ const Carpets = () => {
                         <p className="text-lg font-semibold text-amber-600 mt-1">{item.price}</p>
                       )}
                     </div>
+                    <Button
+                      onClick={() => openPreview(item)}
+                      variant="outline"
+                      size="sm"
+                      className="flex items-center gap-2 hover:bg-amber-50 hover:border-amber-300"
+                    >
+                      <Eye className="w-4 h-4" />
+                      Vista Previa
+                    </Button>
                   </div>
                 </CardContent>
               </Card>
@@ -121,6 +161,54 @@ const Carpets = () => {
             No hay alfombras disponibles. Actualiza la tabla carpets_items en Supabase para mostrar productos nuevos.
           </div>
         )}
+
+        {/* Image Preview Modal */}
+        <Dialog open={previewModal.isOpen} onOpenChange={(open) => !open && closePreview()}>
+          <DialogContent className="max-w-4xl w-full p-0 bg-black/95">
+            {previewModal.currentItem && (
+              <div className="relative">
+                {/* Close button */}
+                <button
+                  onClick={closePreview}
+                  className="absolute top-4 right-4 z-50 w-10 h-10 bg-black/50 rounded-full flex items-center justify-center hover:bg-black/70 transition-colors text-white"
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+
+                {/* Main image */}
+                <div className="relative aspect-[4/3] bg-black">
+                  <img
+                    src={previewModal.currentItem.image_url}
+                    alt={previewModal.currentItem.name}
+                    className="w-full h-full object-contain"
+                  />
+                </div>
+
+                {/* Product info */}
+                <div className="bg-black/70 text-white p-6">
+                  <div className="max-w-2xl mx-auto">
+                    <h2 className="text-2xl font-serif font-bold mb-2">{previewModal.currentItem.name}</h2>
+                    <p className="text-gray-300 mb-4 leading-relaxed">
+                      {previewModal.currentItem.description || "Alfombra de nueva incorporación"}
+                    </p>
+                    <div className="flex flex-wrap gap-4 text-sm">
+                      <div className="bg-white/10 px-3 py-1 rounded-full">
+                        <span className="font-medium">Tamaño:</span> {previewModal.currentItem.size || "Consultar"}
+                      </div>
+                      {previewModal.currentItem.price && (
+                        <div className="bg-amber-500/20 px-3 py-1 rounded-full">
+                          <span className="font-medium">Precio:</span> {previewModal.currentItem.price}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </DialogContent>
+        </Dialog>
       </div>
     </section>
   );

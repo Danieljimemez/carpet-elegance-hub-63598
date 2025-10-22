@@ -38,7 +38,7 @@ interface CarpetItem {
 }
 
 const Catalog = () => {
-  const [activeTab, setActiveTab] = useState("alfombras");
+  const [activeTab, setActiveTab] = useState("muebles");
 
   const { data: muebles, isLoading: mueblesLoading } = useQuery({
     queryKey: ['furniture-items'],
@@ -68,23 +68,9 @@ const Catalog = () => {
     },
   });
 
-  const { data: alfombras, isLoading: alfombrasLoading } = useQuery({
-    queryKey: ['carpets-items'],
-    queryFn: async () => {
-      const { data, error } = await (supabase as any)
-        .from('carpets_items')
-        .select('*')
-        .eq('is_active', true)
-        .order('display_order', { ascending: false });
-
-      if (error) throw error;
-      return data as CarpetItem[];
-    },
-  });
-
-  const handleViewDetails = (product: FurnitureItem | CurtainItem | CarpetItem, type: 'mueble' | 'cortina' | 'alfombra') => {
-    let name: string;
-    let description: string;
+  const handleViewDetails = (product: any, type: 'mueble' | 'cortina') => {
+    let name = '';
+    let description = '';
 
     switch (type) {
       case 'mueble':
@@ -94,10 +80,6 @@ const Catalog = () => {
       case 'cortina':
         name = (product as CurtainItem).name;
         description = (product as CurtainItem).description || "";
-        break;
-      case 'alfombra':
-        name = (product as CarpetItem).name;
-        description = (product as CarpetItem).description || "";
         break;
       default:
         name = "Producto";
@@ -122,6 +104,7 @@ const Catalog = () => {
               image={product.image_url}
               name={product.name}
               size={product.description || ""}
+              description={product.description || undefined}
               onViewDetails={() => handleViewDetails(product, 'mueble')}
             />
           </div>
@@ -147,6 +130,8 @@ const Catalog = () => {
               image={product.image_url}
               name={product.name}
               size={product.size || product.description || ""}
+              description={product.description || undefined}
+              price={product.price || undefined}
               onViewDetails={() => handleViewDetails(product, 'cortina')}
             />
           </div>
@@ -159,31 +144,6 @@ const Catalog = () => {
     )
   );
 
-  const renderAlfombrasGrid = (products: CarpetItem[]) => (
-    products && products.length > 0 ? (
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 lg:gap-10">
-        {products.map((product, index) => (
-          <div
-            key={product.id}
-            className="animate-fade-in-up"
-            style={{ animationDelay: `${index * 100}ms` }}
-          >
-            <ProductCard
-              image={product.image_url}
-              name={product.name}
-              size={product.size || product.description || ""}
-              onViewDetails={() => handleViewDetails(product, 'alfombra')}
-            />
-          </div>
-        ))}
-      </div>
-    ) : (
-      <div className="text-center text-muted-foreground py-12">
-        No hay alfombras disponibles. Agrega alfombras desde tu tabla carpets_items en Supabase.
-      </div>
-    )
-  );
-
   return (
     <section id="catalogo" className="py-16 sm:py-20 lg:py-32 bg-background">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -192,25 +152,32 @@ const Catalog = () => {
             Nuestro Catálogo
           </h2>
           <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto">
-            Explora nuestra selección exclusiva de alfombras, muebles y cortinas, diseñados para transformar cualquier espacio.
+            Explora nuestra selección exclusiva de muebles y cortinas, diseñados para transformar cualquier espacio.
           </p>
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-3 max-w-md mx-auto mb-12">
-            <TabsTrigger value="alfombras">Alfombras</TabsTrigger>
-            <TabsTrigger value="muebles">Muebles</TabsTrigger>
-            <TabsTrigger value="cortinas">Cortinas</TabsTrigger>
+          <TabsList className="mb-8 sm:mb-12 bg-muted/30 p-1.5 rounded-xl max-w-md mx-auto">
+            <TabsTrigger 
+              value="muebles" 
+              className="flex-1 py-2.5 px-4 rounded-lg text-sm font-medium transition-colors data-[state=active]:bg-background data-[state=active]:shadow-sm"
+              onClick={() => setActiveTab("muebles")}
+            >
+              Muebles
+            </TabsTrigger>
+            <TabsTrigger 
+              value="cortinas" 
+              className="flex-1 py-2.5 px-4 rounded-lg text-sm font-medium transition-colors data-[state=active]:bg-background data-[state=active]:shadow-sm"
+              onClick={() => setActiveTab("cortinas")}
+            >
+              Cortinas
+            </TabsTrigger>
           </TabsList>
 
-          {false || mueblesLoading || cortinasLoading || alfombrasLoading ? (
+          {false || mueblesLoading || cortinasLoading ? (
             <div className="text-center text-muted-foreground">Cargando productos...</div>
           ) : (
             <>
-              <TabsContent value="alfombras">
-                {renderAlfombrasGrid(alfombras || [])}
-              </TabsContent>
-
               <TabsContent value="muebles">
                 {renderMueblesGrid(muebles || [])}
               </TabsContent>

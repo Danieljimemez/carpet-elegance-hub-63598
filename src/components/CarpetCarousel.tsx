@@ -1,14 +1,12 @@
 import { Card, CardContent } from "@/components/ui/card";
 import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel";
+  Dialog,
+  DialogContent,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const CarpetCarousel = () => {
   const { data: carpets, isLoading, error } = useQuery({
@@ -25,6 +23,53 @@ const CarpetCarousel = () => {
     },
   });
 
+  // State for image preview modal
+  const [previewModal, setPreviewModal] = useState<{
+    isOpen: boolean;
+    currentSet: any[] | null;
+    currentIndex: number;
+    setName: string;
+  }>({
+    isOpen: false,
+    currentSet: null,
+    currentIndex: 0,
+    setName: "",
+  });
+
+  // Function to open preview modal
+  const openPreview = (carpets: any[], setName: string, startIndex: number = 0) => {
+    setPreviewModal({
+      isOpen: true,
+      currentSet: carpets,
+      currentIndex: startIndex,
+      setName,
+    });
+  };
+
+  // Function to close preview modal
+  const closePreview = () => {
+    setPreviewModal({
+      isOpen: false,
+      currentSet: null,
+      currentIndex: 0,
+      setName: "",
+    });
+  };
+
+  // Function to navigate in preview modal
+  const navigatePreview = (direction: 'prev' | 'next') => {
+    if (!previewModal.currentSet) return;
+
+    const newIndex = direction === 'next'
+      ? (previewModal.currentIndex + 1) % previewModal.currentSet.length
+      : (previewModal.currentIndex - 1 + previewModal.currentSet.length) % previewModal.currentSet.length;
+
+    setPreviewModal(prev => ({
+      ...prev,
+      currentIndex: newIndex,
+    }));
+  };
+
   // Group carpets by set_name
   const carpetSets = carpets?.reduce((acc: any, carpet: any) => {
     if (!acc[carpet.set_name]) {
@@ -34,16 +79,49 @@ const CarpetCarousel = () => {
     return acc;
   }, {}) || {};
 
+  // Keyboard navigation for modal
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (!previewModal.isOpen) return;
+
+      switch (event.key) {
+        case 'ArrowLeft':
+          event.preventDefault();
+          navigatePreview('prev');
+          break;
+        case 'ArrowRight':
+          event.preventDefault();
+          navigatePreview('next');
+          break;
+        case 'Escape':
+          event.preventDefault();
+          closePreview();
+          break;
+      }
+    };
+
+    if (previewModal.isOpen) {
+      document.addEventListener('keydown', handleKeyDown);
+      // Prevent body scroll when modal is open
+      document.body.style.overflow = 'hidden';
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = 'unset';
+    };
+  }, [previewModal.isOpen, previewModal.currentIndex]);
+
   return (
     <section id="galeria" className="py-16 sm:py-20 lg:py-32 bg-muted/30">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12 sm:mb-16 animate-fade-in">
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-bold text-foreground mb-4">
-            Nuestra Colección Completa
+            Una Muestra de Nuestras Alfombras
           </h2>
           <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto">
-            Explora todas nuestras alfombras disponibles, cada una con diseños únicos y colores exclusivos.
-            Pasa el mouse sobre las imágenes para ver diferentes vistas.
+            Descubre una selección de nuestros diseños más exclusivos. 
+            Visita nuestro showroom para explorar toda la colección y encontrar la alfombra perfecta para tu espacio.
           </p>
         </div>
 
@@ -57,23 +135,25 @@ const CarpetCarousel = () => {
             <p className="text-muted-foreground">Error al cargar la galería</p>
           </div>
         ) : Object.keys(carpetSets).length > 0 ? (
-          <Carousel
-            opts={{
-              align: "start",
-              loop: true,
-            }}
-            className="w-full max-w-6xl mx-auto"
-          >
-            <CarouselContent className="-ml-2 md:-ml-4">
-              {Object.entries(carpetSets).map(([setName, setCarpets]: [string, any[]]) => (
-                <CarouselItem key={setName} className="pl-2 md:pl-4 basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/4">
-                  <CarpetSetCard carpets={setCarpets} setName={setName} />
-                </CarouselItem>
-              ))}
-            </CarouselContent>
-            <CarouselPrevious className="hidden md:flex" />
-            <CarouselNext className="hidden md:flex" />
-          </Carousel>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+            {Object.entries(carpetSets).flatMap(([setName, setCarpets]: [string, any[]]) =>
+              setCarpets.map((carpet, index) => (
+                <div 
+                  key={`${setName}-${index}`}
+                  className="relative group cursor-pointer overflow-hidden rounded-lg bg-white shadow-sm hover:shadow-md transition-shadow"
+                  onClick={() => openPreview([carpet], '', 0)}
+                >
+                  <div className="aspect-square overflow-hidden flex items-center justify-center bg-white p-2">
+                    <img
+                      src={carpet.image_url}
+                      alt={carpet.alt_text || ''}
+                      className="max-w-full max-h-full object-contain hover:scale-105 transition-transform duration-300"
+                    />
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
         ) : (
           <div className="text-center py-16">
             <div className="max-w-md mx-auto">
@@ -90,18 +170,116 @@ const CarpetCarousel = () => {
           </div>
         )}
 
-        <div className="text-center mt-8">
-          <p className="text-sm text-muted-foreground">
-            Desliza para ver más alfombras • Usa las flechas para navegar
-          </p>
-        </div>
+        {/* Image Preview Modal */}
+        <Dialog open={previewModal.isOpen} onOpenChange={(open) => !open && closePreview()}>
+          <DialogContent className="max-w-6xl w-full p-0 bg-transparent border-0 overflow-hidden shadow-none">
+            {previewModal.currentSet && previewModal.currentSet[previewModal.currentIndex] && (
+              <div className="relative w-full h-[90vh] flex items-center justify-center">
+                {/* Overlay de fondo con efecto de vidrio esmerilado */}
+                <div className="absolute inset-0 bg-black/30 backdrop-blur-sm"></div>
+                
+                {/* Close button */}
+                <button
+                  onClick={closePreview}
+                  className="absolute top-6 right-6 z-50 w-12 h-12 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white transition-all duration-200 text-gray-800 shadow-lg hover:scale-105"
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+
+                {/* Contenedor de la imagen con efecto de vidrio */}
+                <div className="relative w-full h-full max-w-5xl max-h-[85vh] flex items-center justify-center p-4">
+                  <div className="relative w-full h-full flex items-center justify-center">
+                    {/* Fondo del contenedor con efecto de vidrio */}
+                    <div className="absolute inset-0 bg-white/80 backdrop-blur-lg rounded-2xl shadow-2xl border border-white/20"></div>
+                    
+                    {/* Imagen */}
+                    <img
+                      src={previewModal.currentSet[previewModal.currentIndex].image_url}
+                      alt={previewModal.currentSet[previewModal.currentIndex].alt_text || ''}
+                      className="relative z-10 max-w-full max-h-full object-contain"
+                    />
+                    
+                    {/* Efecto de borde sutil */}
+                    <div className="absolute inset-0 ring-1 ring-inset ring-black/5 rounded-2xl pointer-events-none"></div>
+                  </div>
+                </div>
+
+                {/* Navigation buttons */}
+                {previewModal.currentSet.length > 1 && (
+                  <>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigatePreview('prev');
+                      }}
+                      className="absolute left-6 top-1/2 -translate-y-1/2 z-50 w-12 h-12 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white transition-all duration-200 text-gray-800 shadow-lg hover:scale-105"
+                      aria-label="Anterior imagen"
+                    >
+                      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+                      </svg>
+                    </button>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigatePreview('next');
+                      }}
+                      className="absolute right-6 top-1/2 -translate-y-1/2 z-50 w-12 h-12 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white transition-all duration-200 text-gray-800 shadow-lg hover:scale-105"
+                      aria-label="Siguiente imagen"
+                    >
+                      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                      </svg>
+                    </button>
+                  </>
+                )}
+
+                {/* Thumbnails */}
+                {previewModal.currentSet.length > 1 && (
+                  <div className="absolute bottom-8 left-0 right-0 flex justify-center space-x-3 z-50 px-4">
+                    {previewModal.currentSet.map((_, idx) => (
+                      <button
+                        key={idx}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setPreviewModal(prev => ({
+                            ...prev,
+                            currentIndex: idx
+                          }));
+                        }}
+                        className={`h-1.5 rounded-full transition-all duration-300 ${
+                          previewModal.currentIndex === idx 
+                            ? 'w-8 bg-gray-800' 
+                            : 'w-4 bg-gray-400 hover:bg-gray-600'
+                        }`}
+                        aria-label={`Ir a imagen ${idx + 1}`}
+                      />
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+          </DialogContent>
+        </Dialog>
+      </div>
+      
+      <div className="text-center mt-8">
+        <p className="text-sm text-muted-foreground italic">
+          Descubre cada detalle: Haz clic en cualquier imagen para verla en alta resolución
+        </p>
       </div>
     </section>
   );
 };
 
 // Component for individual carpet sets with hover/click functionality
-const CarpetSetCard = ({ carpets, setName }: { carpets: any[], setName: string }) => {
+const CarpetSetCard = ({ carpets, setName, onPreview }: {
+  carpets: any[],
+  setName: string,
+  onPreview: (carpets: any[], setName: string, startIndex: number) => void
+}) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
 
@@ -120,9 +298,15 @@ const CarpetSetCard = ({ carpets, setName }: { carpets: any[], setName: string }
       className="overflow-hidden hover:shadow-lg transition-all duration-300 cursor-pointer group"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      onClick={nextImage}
     >
-      <div className="aspect-square relative overflow-hidden">
+      <div
+        className="aspect-square relative overflow-hidden"
+        onClick={(e) => {
+          // Prevent opening preview if clicking on navigation buttons
+          if ((e.target as HTMLElement).closest('button')) return;
+          onPreview(carpets, setName, currentImageIndex);
+        }}
+      >
         <img
           src={currentCarpet.image_url}
           alt={currentCarpet.alt_text || currentCarpet.name}
@@ -161,7 +345,7 @@ const CarpetSetCard = ({ carpets, setName }: { carpets: any[], setName: string }
               }}
               className="w-10 h-10 bg-white/90 rounded-full flex items-center justify-center hover:bg-white transition-colors shadow-lg"
             >
-              <svg className="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>
             </button>
@@ -170,7 +354,7 @@ const CarpetSetCard = ({ carpets, setName }: { carpets: any[], setName: string }
 
         {/* Hover indicator */}
         <div className={`absolute top-2 right-2 bg-white/90 px-2 py-1 rounded-full text-xs font-medium text-gray-700 transition-opacity duration-300 ${isHovered ? 'opacity-100' : 'opacity-0'}`}>
-          Haz clic para cambiar vista
+          Haz clic para ampliar
         </div>
       </div>
 

@@ -1,4 +1,4 @@
-import { Mail, Phone, MapPin, Clock, Facebook, Instagram, Hash } from "lucide-react";
+import { Mail, Phone, MapPin, Clock, Facebook, Instagram } from "lucide-react";
 
 const Footer = () => {
   return (
@@ -106,7 +106,14 @@ const Footer = () => {
                 className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-smooth"
                 aria-label="TikTok"
               >
-                <Hash className="w-5 h-5" />
+                <svg
+                  className="w-5 h-5"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path d="M19.589 6.686a4.793 4.793 0 0 1-3.77-4.245V2h-3.445v13.672a2.896 2.896 0 0 1-5.201 1.743l-.002-.001.002.001a2.895 2.895 0 0 1 3.183-4.51v-3.5a6.329 6.329 0 0 0-1.183-.11 6.444 6.444 0 1 0 6.444 6.444V8.953c1.076.207 2.14.653 3.02 1.285a7.552 7.552 0 0 0 2.717-5.657z"/>
+                </svg>
               </a>
             </div>
           </div>
