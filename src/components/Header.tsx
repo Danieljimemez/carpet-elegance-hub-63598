@@ -1,6 +1,30 @@
 import { useState } from "react";
-import { Menu, X, MapPin } from "lucide-react";
+import { Menu, X, MapPin, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+
+const LOCATIONS = [
+  {
+    name: "Matriz",
+    url: "https://maps.app.goo.gl/gKXQML5ncSv2aS8bA",
+    address: "Blvd. Benito Juárez No. 151, Zona Centro, 22703 Playas de Rosarito, B.C."
+  },
+  {
+    name: "Sucursal Guerrero",
+    url: "https://maps.app.goo.gl/XW5KqTLHP22r5wow7",
+    address: "Guerrero 1234, Constitución (Ampl. Constitución), 22707 Playas de Rosarito, B.C."
+  },
+  {
+    name: "Sucursal Mexicali",
+    url: "https://maps.app.goo.gl/L8qyz2NknMjrHEnj7",
+    address: "Blvd. Lázaro Cárdenas 1190, Desarrollo Urbano Zacatecas II, 21389 Mexicali, B.C."
+  }
+];
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -66,11 +90,30 @@ const Header = () => {
             >
               Contacto
             </Button>
-            <a href="https://maps.app.goo.gl/gKXQML5ncSv2aS8bA" target="_blank" rel="noopener noreferrer">
-              <Button variant="outline" className="ml-2 lg:ml-4">
-                <MapPin className="w-4 h-4" />
-              </Button>
-            </a>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" className="ml-2 lg:ml-4">
+                  <MapPin className="w-4 h-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-64 p-0">
+                {LOCATIONS.map((location) => (
+                  <DropdownMenuItem key={location.name} className="p-0">
+                    <a 
+                      href={location.url} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="w-full px-4 py-2 block hover:bg-accent hover:text-accent-foreground"
+                    >
+                      <div className="flex flex-col items-start">
+                        <span className="font-medium">{location.name}</span>
+                        <span className="text-xs text-muted-foreground">{location.address}</span>
+                      </div>
+                    </a>
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
           </nav>
 
           {/* Mobile Menu Button */}
@@ -125,12 +168,32 @@ const Header = () => {
               <Button onClick={() => scrollToSection("contacto")} className="justify-start">
                 Contacto
               </Button>
-              <a href="https://maps.app.goo.gl/gKXQML5ncSv2aS8bA" target="_blank" rel="noopener noreferrer">
-                <Button variant="outline" className="justify-start">
-                  <MapPin className="w-4 h-4 mr-2" />
-                  Ubicación
-                </Button>
-              </a>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" className="justify-start">
+                    <MapPin className="w-4 h-4 mr-2" />
+                    <span>Ubicaciones</span>
+                    <ChevronDown className="w-4 h-4 ml-2 opacity-50" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-64 p-0">
+                  {LOCATIONS.map((location) => (
+                    <DropdownMenuItem key={location.name} className="p-0">
+                      <a 
+                        href={location.url} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="w-full px-4 py-2 block hover:bg-accent hover:text-accent-foreground"
+                      >
+                        <div className="flex flex-col items-start">
+                          <span className="font-medium">{location.name}</span>
+                          <span className="text-xs text-muted-foreground">{location.address}</span>
+                        </div>
+                      </a>
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
           </nav>
         )}
