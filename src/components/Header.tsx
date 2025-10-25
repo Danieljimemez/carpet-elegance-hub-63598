@@ -42,9 +42,13 @@ const Header = () => {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 lg:h-20">
           <div className="flex-shrink-0">
-            <h1 className="text-xl sm:text-2xl lg:text-3xl font-serif font-bold text-primary">
-              Muebles Rangel
-            </h1>
+            <a href="/" className="block">
+              <img 
+                src="/logo.png"
+                alt="Muebles Rangel" 
+                className="h-10 sm:h-12 lg:h-14 w-auto object-contain"
+              />
+            </a>
           </div>
 
           {/* Desktop Navigation */}

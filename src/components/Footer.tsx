@@ -4,7 +4,7 @@ const Footer = () => {
   return (
     <footer className="bg-card border-t border-border">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 sm:gap-12">
           {/* Brand */}
           <div>
             <h3 className="text-2xl font-serif font-bold text-primary mb-4">
@@ -22,56 +22,168 @@ const Footer = () => {
               <li className="flex items-start gap-3">
                 <Mail className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
                 <a
-                  href="mailto:contacto@alfombraselegantes.com"
+                  href="mailto:rangelraj@prodigy.net.mx"
                   className="text-sm text-muted-foreground hover:text-primary transition-colors"
                 >
-                  contacto@alfombraselegantes.com
+                  rangelraj@prodigy.net.mx
                 </a>
               </li>
               <li className="flex items-start gap-3">
                 <Phone className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
-                <a
-                  href="tel:+526611234567"
-                  className="text-sm text-muted-foreground hover:text-primary transition-colors"
-                >
-                  +52 661 123 4567
-                </a>
+                <div className="space-y-1">
+                  <div className="flex items-center">
+                    <span className="font-medium mr-1">Matriz:</span>
+                    <a
+                      href="tel:+526616121426"
+                      className="text-sm text-muted-foreground hover:text-primary transition-colors"
+                    >
+                      (661) 612 1426
+                    </a>
+                  </div>
+                  <div className="flex items-center">
+                    <span className="font-medium mr-1">Guerrero:</span>
+                    <a
+                      href="tel:+526616120561"
+                      className="text-sm text-muted-foreground hover:text-primary transition-colors"
+                    >
+                      (661) 612 0561
+                    </a>
+                  </div>
+                  <div className="flex items-center">
+                    <span className="font-medium mr-1">Mexicali:</span>
+                    <a
+                      href="tel:+526865619588"
+                      className="text-sm text-muted-foreground hover:text-primary transition-colors"
+                    >
+                      (686) 561 9588
+                    </a>
+                  </div>
+                </div>
+              </li>
+            </ul>
+          </div>
+
+          {/* Ubicaciones */}
+          <div>
+            <h4 className="text-lg font-semibold text-foreground mb-4">Ubicaciones</h4>
+            <ul className="space-y-3">
+              <li className="flex items-start gap-3">
+                <MapPin className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
+                <div>
+                  <p className="font-medium text-sm">Matriz</p>
+                  <p className="text-sm text-muted-foreground">Blvd. Benito Juárez No. 151, Zona Centro</p>
+                  <p className="text-sm text-muted-foreground">22703 Playas de Rosarito, B.C.</p>
+                </div>
               </li>
               <li className="flex items-start gap-3">
                 <MapPin className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
-                <span className="text-sm text-muted-foreground">
-                  Playas de Rosarito, México
-                </span>
+                <div>
+                  <p className="font-medium text-sm">Sucursal Guerrero</p>
+                  <p className="text-sm text-muted-foreground">Guerrero 1234, Constitución (Ampl. Constitución)</p>
+                  <p className="text-sm text-muted-foreground">22707 Playas de Rosarito, B.C.</p>
+                </div>
+              </li>
+              <li className="flex items-start gap-3">
+                <MapPin className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
+                <div>
+                  <p className="font-medium text-sm">Sucursal Mexicali</p>
+                  <p className="text-sm text-muted-foreground">Blvd. Lázaro Cárdenas 1190, Desarrollo Urbano Zacatecas II</p>
+                  <p className="text-sm text-muted-foreground">21389 Mexicali, B.C.</p>
+                </div>
               </li>
             </ul>
           </div>
 
           {/* Hours */}
-          <div>
-            <h4 className="text-lg font-semibold text-foreground mb-4">Horario de Atención</h4>
-            <ul className="space-y-3">
-              <li className="flex items-start gap-3">
-                <Clock className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
-                <div className="text-sm text-muted-foreground">
-                  <p>Lunes a Viernes</p>
-                  <p className="font-medium">9:00 AM - 7:00 PM</p>
+          <div className="lg:col-span-2">
+            <h4 className="text-lg font-semibold text-foreground mb-6">Horarios de Atención</h4>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {/* Horario Matriz */}
+              <div className="bg-secondary/20 p-5 rounded-xl border border-border/30">
+                <div className="flex items-center gap-2 mb-3">
+                  <div className="w-2 h-2 rounded-full bg-primary"></div>
+                  <h5 className="font-semibold text-foreground">Matriz</h5>
                 </div>
-              </li>
-              <li className="flex items-start gap-3">
-                <Clock className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
-                <div className="text-sm text-muted-foreground">
-                  <p>Sábados</p>
-                  <p className="font-medium">10:00 AM - 6:00 PM</p>
+                <ul className="space-y-3">
+                  <li className="flex items-start gap-3">
+                    <Clock className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+                    <div className="text-sm">
+                      <p className="text-muted-foreground">Lunes a Viernes</p>
+                      <p className="text-foreground font-medium">9:00 AM - 5:30 PM</p>
+                    </div>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <Clock className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+                    <div className="text-sm">
+                      <p className="text-muted-foreground">Sábado</p>
+                      <p className="text-foreground font-medium">9:00 AM - 4:00 PM</p>
+                    </div>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <Clock className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+                    <div className="text-sm">
+                      <p className="text-muted-foreground">Domingo</p>
+                      <p className="text-foreground font-medium">Cerrado</p>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+
+              {/* Horario Guerrero */}
+              <div className="bg-secondary/20 p-5 rounded-xl border border-border/30">
+                <div className="flex items-center gap-2 mb-3">
+                  <div className="w-2 h-2 rounded-full bg-primary"></div>
+                  <h5 className="font-semibold text-foreground">Sucursal Guerrero</h5>
                 </div>
-              </li>
-              <li className="flex items-start gap-3">
-                <Clock className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
-                <div className="text-sm text-muted-foreground">
-                  <p>Domingos</p>
-                  <p className="font-medium">Cerrado</p>
+                <ul className="space-y-3">
+                  <li className="flex items-start gap-3">
+                    <Clock className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+                    <div className="text-sm">
+                      <p className="text-muted-foreground">Lunes a Sábado</p>
+                      <p className="text-foreground font-medium">8:00 AM - 5:00 PM</p>
+                    </div>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <Clock className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+                    <div className="text-sm">
+                      <p className="text-muted-foreground">Domingo</p>
+                      <p className="text-foreground font-medium">Cerrado</p>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+
+              {/* Horario Mexicali */}
+              <div className="bg-secondary/20 p-5 rounded-xl border border-border/30">
+                <div className="flex items-center gap-2 mb-3">
+                  <div className="w-2 h-2 rounded-full bg-primary"></div>
+                  <h5 className="font-semibold text-foreground">Sucursal Mexicali</h5>
                 </div>
-              </li>
-            </ul>
+                <ul className="space-y-3">
+                  <li className="flex items-start gap-3">
+                    <Clock className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+                    <div className="text-sm">
+                      <p className="text-muted-foreground">Lunes a Viernes</p>
+                      <p className="text-foreground font-medium">8:00 AM - 6:00 PM</p>
+                    </div>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <Clock className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+                    <div className="text-sm">
+                      <p className="text-muted-foreground">Sábado</p>
+                      <p className="text-foreground font-medium">8:00 AM - 2:00 PM</p>
+                    </div>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <Clock className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+                    <div className="text-sm">
+                      <p className="text-muted-foreground">Domingo</p>
+                      <p className="text-foreground font-medium">Cerrado</p>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+            </div>
           </div>
 
           {/* Social */}
