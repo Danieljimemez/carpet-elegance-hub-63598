@@ -12,47 +12,62 @@ const Contact = () => {
     email: "",
     phone: "",
     message: "",
-    customSize: "",
+    customSize: ""
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Basic validation
+    // Validación básica
     if (!formData.name || !formData.email || !formData.message) {
       toast.error("Por favor completa todos los campos requeridos");
       return;
     }
 
-    // Save to database
-    const { error } = await (supabase as any)
-      .from('contacts')
-      .insert([{
-        name: formData.name,
-        email: formData.email,
-        phone: formData.phone,
-        message: formData.message,
-        custom_size: formData.customSize,
-      }]);
+    try {
+      // Mostrar indicador de carga
+      const loadingToast = toast.loading("Enviando mensaje...");
+      
+      // Guardar en la base de datos
+      const { data, error } = await (supabase as any)
+        .from('contact_requests')
+        .insert([{
+          name: formData.name.trim(),
+          email: formData.email.trim(),
+          phone: formData.phone?.trim() || null,
+          message: formData.message.trim(),
+          subject: formData.customSize ? `Medida personalizada: ${formData.customSize}` : 'Consulta general',
+          status: 'new'
+        }])
+        .select();
 
-    if (error) {
-      console.error('Error saving contact:', error);
-      toast.error("Error al enviar el mensaje. Inténtalo de nuevo.");
-      return;
+      // Cerrar el toast de carga
+      toast.dismiss(loadingToast);
+
+      if (error) {
+        console.error('Error al guardar contacto:', error);
+        toast.error(`Error al enviar el mensaje: ${error.message}`);
+        return;
+      }
+
+      // Mostrar mensaje de éxito
+      toast.success("¡Mensaje enviado con éxito!", {
+        description: "Nos pondremos en contacto contigo pronto.",
+      });
+
+      // Restablecer el formulario
+      setFormData({
+        name: "",
+        email: "",
+        phone: "",
+        message: "",
+        customSize: ""
+      });
+
+    } catch (error) {
+      console.error('Error inesperado:', error);
+      toast.error("Ocurrió un error inesperado. Por favor, inténtalo de nuevo.");
     }
-
-    toast.success("¡Mensaje enviado!", {
-      description: "Nos pondremos en contacto contigo pronto.",
-    });
-
-    // Reset form
-    setFormData({
-      name: "",
-      email: "",
-      phone: "",
-      message: "",
-      customSize: "",
-    });
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -125,17 +140,15 @@ const Contact = () => {
                   />
                 </div>
 
-                <div>
-                  <label htmlFor="customSize" className="block text-sm font-medium text-foreground mb-2">
-                    Medidas especiales
-                  </label>
+                <div className="space-y-2">
+                  <label htmlFor="customSize">Medidas Especiales (opcional)</label>
                   <Input
                     id="customSize"
-                    name="customSize"
-                    type="text"
                     value={formData.customSize}
-                    onChange={handleChange}
-                    placeholder="Ej: 250 x 350 cm"
+                    onChange={(e) =>
+                      setFormData({ ...formData, customSize: e.target.value })
+                    }
+                    placeholder="Ej: 2m x 3m"
                     className="w-full"
                   />
                 </div>

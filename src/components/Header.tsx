@@ -46,7 +46,7 @@ const Header = () => {
               <img 
                 src="/logo.png"
                 alt="Muebles Rangel" 
-                className="h-10 sm:h-12 lg:h-14 w-auto object-contain"
+                className="h-12 sm:h-14 lg:h-16 w-auto object-contain"
               />
             </a>
           </div>

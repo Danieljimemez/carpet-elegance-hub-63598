@@ -6,6 +6,7 @@ import {
   DialogContent,
 } from "@/components/ui/dialog";
 import { useState } from "react";
+import { getImageUrl } from "@/services/supabaseService";
 
 interface ProductCardProps {
   image: string;
@@ -25,12 +26,12 @@ const ProductCard = ({ image, name, size, description, price, onViewDetails }: P
     <Card className="group overflow-hidden shadow-soft hover:shadow-elevated transition-smooth bg-card border-border flex flex-col h-full">
       <div className="relative flex-1 min-h-[180px] max-h-[300px] flex items-center justify-center p-3 bg-white">
         <img
-          src={image}
+          src={getImageUrl('products', image)}
           alt={name}
           className="w-auto h-auto max-w-full max-h-[250px] object-contain"
           onError={(e) => {
             console.warn(`Failed to load product image: ${image}`);
-            e.currentTarget.src = "/placeholder.svg";
+            e.currentTarget.src = "https://placehold.co/400x400/1e40af/white?text=Imagen+No+Disponible";
           }}
           style={{
             maxHeight: '250px',
@@ -86,9 +87,13 @@ const ProductCard = ({ image, name, size, description, price, onViewDetails }: P
                 
                 {/* Imagen */}
                 <img
-                  src={image}
+                  src={getImageUrl('products', image)}
                   alt={name}
                   className="relative z-10 max-w-full max-h-full object-contain"
+                  onError={(e) => {
+                    console.warn(`Failed to load preview image: ${image}`);
+                    e.currentTarget.src = "https://placehold.co/800x600/1e40af/white?text=Imagen+No+Disponible";
+                  }}
                 />
                 
                 {/* Efecto de borde sutil */}

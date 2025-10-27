@@ -3,6 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { Sparkles } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { getImageUrl } from "@/services/supabaseService";
 
 // Esta sección muestra las incorporaciones mensuales desde la base de datos
 // Los productos se pueden actualizar mensualmente desde Supabase
@@ -64,12 +65,12 @@ const MonthlyUpdates = () => {
               >
                 <div className="relative">
                   <img
-                    src={product.image_url}
+                    src={getImageUrl('monthly', product.image_url)}
                     alt={product.name}
                     className="w-full h-64 sm:h-80 object-cover"
                     onError={(e) => {
                       console.warn(`Failed to load monthly product image: ${product.image_url}`);
-                      e.currentTarget.src = "/placeholder.svg";
+                      e.currentTarget.src = "https://placehold.co/800x600/1e40af/white?text=Imagen+No+Disponible";
                     }}
                   />
                   <Badge className="absolute top-4 right-4 bg-primary text-primary-foreground shadow-soft">

@@ -5,21 +5,21 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
+import { fetchGalleryPhotos, getImageUrl } from "@/services/supabaseService";
 
 const CarpetCarousel = () => {
-  const { data: carpets, isLoading, error } = useQuery({
+  const { data: carpets = [], isLoading, error } = useQuery({
     queryKey: ["gallery-photos"],
     queryFn: async () => {
-      const { data, error } = await (supabase as any)
-        .from("gallery_photos")
-        .select("*")
-        .eq("is_active", true)
-        .order("display_order", { ascending: true });
-
-      if (error) throw error;
-      return data;
+      try {
+        const photos = await fetchGalleryPhotos();
+        console.log('Fetched gallery photos:', photos); // Debug log
+        return photos;
+      } catch (err) {
+        console.error('Error fetching gallery photos:', err);
+        throw err;
+      }
     },
   });
 
@@ -57,30 +57,35 @@ const CarpetCarousel = () => {
   };
 
   // Function to navigate in preview modal
-  const navigatePreview = (direction: 'prev' | 'next') => {
-    if (!previewModal.currentSet) return;
+  const navigatePreview = useCallback((direction: 'prev' | 'next') => {
+    setPreviewModal(prev => {
+      if (!prev.currentSet) return prev;
+      
+      const newIndex = direction === 'next'
+        ? (prev.currentIndex + 1) % prev.currentSet.length
+        : (prev.currentIndex - 1 + prev.currentSet.length) % prev.currentSet.length;
 
-    const newIndex = direction === 'next'
-      ? (previewModal.currentIndex + 1) % previewModal.currentSet.length
-      : (previewModal.currentIndex - 1 + previewModal.currentSet.length) % previewModal.currentSet.length;
-
-    setPreviewModal(prev => ({
-      ...prev,
-      currentIndex: newIndex,
-    }));
-  };
+      return {
+        ...prev,
+        currentIndex: newIndex,
+      };
+    });
+  }, []);
 
   // Group carpets by set_name
-  const carpetSets = carpets?.reduce((acc: any, carpet: any) => {
+  const carpetSets = (carpets || []).reduce((acc: any, carpet: any) => {
+    if (!carpet?.set_name) return acc; // Skip if set_name is not defined
     if (!acc[carpet.set_name]) {
       acc[carpet.set_name] = [];
     }
     acc[carpet.set_name].push(carpet);
     return acc;
-  }, {}) || {};
+  }, {} as Record<string, any[]>);
 
   // Keyboard navigation for modal
   useEffect(() => {
+    if (!previewModal.isOpen) return;
+    
     const handleKeyDown = (event: KeyboardEvent) => {
       if (!previewModal.isOpen) return;
 
@@ -97,20 +102,19 @@ const CarpetCarousel = () => {
           event.preventDefault();
           closePreview();
           break;
+        default:
+          break;
       }
     };
 
-    if (previewModal.isOpen) {
-      document.addEventListener('keydown', handleKeyDown);
-      // Prevent body scroll when modal is open
-      document.body.style.overflow = 'hidden';
-    }
-
+    // Add event listener for keyboard navigation
+    window.addEventListener('keydown', handleKeyDown);
+    
+    // Cleanup function to remove the event listener
     return () => {
-      document.removeEventListener('keydown', handleKeyDown);
-      document.body.style.overflow = 'unset';
+      window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [previewModal.isOpen, previewModal.currentIndex]);
+  }, [previewModal.isOpen, navigatePreview]);
 
   return (
     <section id="galeria" className="py-16 sm:py-20 lg:py-32 bg-muted/30">
@@ -145,9 +149,15 @@ const CarpetCarousel = () => {
                 >
                   <div className="aspect-square overflow-hidden flex items-center justify-center bg-white p-2">
                     <img
-                      src={carpet.image_url}
-                      alt={carpet.alt_text || ''}
+                      src={getImageUrl('gallery', carpet.image_url)}
+                      alt={carpet.alt_text || `Imagen ${index + 1}`}
                       className="max-w-full max-h-full object-contain hover:scale-105 transition-transform duration-300"
+                      onError={(e) => {
+                        console.error('Error loading image:', carpet.image_url);
+                        // Fallback image in case of error
+                        e.currentTarget.src = 'https://placehold.co/400x400/1e40af/white?text=Imagen+No+Disponible';
+                        e.currentTarget.alt = 'Imagen no disponible';
+                      }}
                     />
                   </div>
                 </div>
@@ -196,9 +206,14 @@ const CarpetCarousel = () => {
                     
                     {/* Imagen */}
                     <img
-                      src={previewModal.currentSet[previewModal.currentIndex].image_url}
+                      src={getImageUrl('gallery', previewModal.currentSet[previewModal.currentIndex].image_url)}
                       alt={previewModal.currentSet[previewModal.currentIndex].alt_text || ''}
                       className="relative z-10 max-w-full max-h-full object-contain"
+                      onError={(e) => {
+                        console.error('Error loading preview image:', previewModal.currentSet[previewModal.currentIndex].image_url);
+                        e.currentTarget.src = 'https://placehold.co/800x600/1e40af/white?text=Imagen+No+Disponible';
+                        e.currentTarget.alt = 'Imagen no disponible';
+                      }}
                     />
                     
                     {/* Efecto de borde sutil */}

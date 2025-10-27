@@ -1,0 +1,148 @@
+import { Button } from "./ui/button";
+import { Calculator, Ruler, Loader2 } from "lucide-react";
+import { Carousel, CarouselContent, CarouselItem } from "./ui/carousel";
+import Autoplay from "embla-carousel-autoplay";
+import { useState } from "react";
+import { Input } from "./ui/input";
+import { Label } from "./ui/label";
+import { useQuery } from "@tanstack/react-query";
+import { fetchPromoBanners } from "@/services/supabaseService";
+
+const PromoBanner = () => {
+  const [showCalculator, setShowCalculator] = useState(false);
+  const [squareMeters, setSquareMeters] = useState<number | ''>('');
+  const [price, setPrice] = useState<number>(0);
+  const pricePerM2 = 108; // Precio por metro cuadrado
+
+  // Obtener banners promocionales de la tabla promo_banner
+  const { data: promoBanners = [], isLoading } = useQuery({
+    queryKey: ['promo-banners'],
+    queryFn: fetchPromoBanners,
+  });
+
+  const handleCalculatePrice = () => {
+    if (typeof squareMeters === 'number' && squareMeters > 0) {
+      setPrice(squareMeters * pricePerM2);
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-64 bg-gray-100">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  if (promoBanners.length === 0) {
+    return null; // No mostrar el banner si no hay imágenes
+  }
+
+  return (
+    <section className="py-8 bg-white">
+      <div className="container mx-auto px-4">
+        <div className="bg-white rounded-lg shadow-md overflow-hidden">
+          <Carousel
+            className="w-full"
+            plugins={[
+              Autoplay({
+                delay: 5000,
+                stopOnInteraction: false,
+                stopOnMouseEnter: true,
+              }),
+            ]}
+          >
+            <CarouselContent>
+              {promoBanners.map((banner) => (
+                <CarouselItem key={banner.id}>
+                  <div className="relative">
+                    <img
+                      src={banner.image_url}
+                      alt={banner.alt_text || 'Promoción'}
+                      className="w-full h-auto object-cover"
+                      onError={(e) => {
+                        e.currentTarget.src = 'https://placehold.co/1200x400/1e40af/white?text=Promoción+No+Disponible';
+                        e.currentTarget.alt = 'Imagen promocional no disponible';
+                      }}
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-6">
+                      <div className="text-white">
+                        <h2 className="text-2xl font-bold mb-2">{banner.title}</h2>
+                        {banner.description && (
+                          <p className="text-gray-200">{banner.description}</p>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+          </Carousel>
+
+          <div className="p-6 border-t border-gray-100">
+            <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+              <div className="flex-1">
+                <h3 className="text-lg font-semibold text-gray-900">
+                  ¿Necesitas ayuda para calcular el tamaño de tu alfombra?
+                </h3>
+                <p className="text-gray-600 mt-1">
+                  Usa nuestra calculadora para obtener un estimado del costo.
+                </p>
+              </div>
+              
+              <Button
+                variant="outline"
+                className="flex items-center gap-2"
+                onClick={() => setShowCalculator(!showCalculator)}
+              >
+                <Ruler className="w-4 h-4" />
+                {showCalculator ? 'Ocultar calculadora' : 'Mostrar calculadora'}
+              </Button>
+            </div>
+
+            {showCalculator && (
+              <div className="mt-6 p-4 bg-gray-50 rounded-lg">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="length">Largo (metros)</Label>
+                    <Input
+                      id="length"
+                      type="number"
+                      placeholder="Ej: 2.5"
+                      min="0.1"
+                      step="0.1"
+                      value={squareMeters}
+                      onChange={(e) => {
+                        const value = parseFloat(e.target.value);
+                        setSquareMeters(isNaN(value) ? '' : value);
+                      }}
+                    />
+                  </div>
+                  
+                  <div className="flex items-end">
+                    <Button onClick={handleCalculatePrice} className="w-full">
+                      Calcular
+                    </Button>
+                  </div>
+                  
+                  <div className="bg-white p-4 rounded-md border border-gray-200">
+                    <p className="text-sm text-gray-500">Precio estimado:</p>
+                    <p className="text-2xl font-bold text-primary">
+                      {price > 0 ? `$${price.toFixed(2)}` : '---'}
+                    </p>
+                  </div>
+                </div>
+                
+                <p className="text-xs text-gray-500 mt-4">
+                  * Este es un precio estimado. Contáctanos para una cotización exacta.
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+export default PromoBanner;

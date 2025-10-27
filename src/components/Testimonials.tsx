@@ -13,8 +13,20 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 
+// Interfaz para los testimonios
 interface Testimonio {
   id: string;
+  author_name: string;
+  author_role: string;
+  content: string;
+  rating: number;
+  created_at: string;
+  is_approved?: boolean;
+  status?: string;
+}
+
+// Interfaz para el formulario
+interface TestimonioFormData {
   nombre: string;
   rol: string;
   comentario: string;
@@ -34,8 +46,8 @@ const Testimonials = () => {
   const [showForm, setShowForm] = useState(false);
   const queryClient = useQueryClient();
 
-  // Obtener testimonials aprobados de la base de datos
-  const { data: testimonials, isLoading } = useQuery({
+  // Obtener testimonios aprobados de la base de datos
+  const { data: testimonials, isLoading } = useQuery<Testimonio[]>({
     queryKey: ['testimonials'],
     queryFn: async () => {
       const { data, error } = await (supabase as any)
@@ -44,8 +56,11 @@ const Testimonials = () => {
         .eq('is_approved', true)
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
-      return data;
+      if (error) {
+        console.error('Error al cargar testimonios:', error);
+        throw error;
+      }
+      return data || [];
     },
   });
 
@@ -59,23 +74,30 @@ const Testimonials = () => {
     },
   });
 
-  const onSubmit = async (data: TestimonialForm) => {
+  const onSubmit = async (formData: TestimonioFormData) => {
     try {
-      const { error } = await (supabase as any)
+      // Mapear los campos del formulario a la estructura de la base de datos
+      const testimonialData = {
+        author_name: formData.nombre.trim(),
+        author_role: formData.rol.trim(),
+        content: formData.comentario.trim(),
+        rating: formData.calificacion,
+        is_approved: false
+      };
+
+      const { data, error } = await (supabase as any)
         .from('testimonials')
-        .insert([{
-          nombre: data.nombre,
-          rol: data.rol,
-          comentario: data.comentario,
-          calificacion: data.calificacion,
-          is_approved: false // Los nuevos testimonials necesitan aprobación
-        }]);
+        .insert([testimonialData])
+        .select();
 
       if (error) {
-        console.error('Error al guardar testimonial:', error);
-        toast.error("Error al enviar el testimonio. Inténtalo de nuevo.");
+        console.error('Error al guardar testimonio:', error);
+        toast.error(`Error al enviar el testimonio: ${error.message}`);
         return;
       }
+
+// Forzar actualización de la lista de testimonios
+      await queryClient.invalidateQueries({ queryKey: ['testimonials'] });
 
       toast.success("¡Gracias por tu testimonio!", {
         description: "Se publicará después de ser revisado por nuestro equipo."
@@ -105,24 +127,21 @@ const Testimonials = () => {
           {isLoading ? (
             <div className="col-span-full text-center text-muted-foreground">Cargando testimonios...</div>
           ) : testimonials && testimonials.length > 0 ? (
-            testimonials.slice(0, 6).map((testimonial, index) => (
-              <Card
-                key={testimonial.id}
-                className="shadow-soft hover:shadow-elevated transition-smooth animate-fade-in-up"
-                style={{ animationDelay: `${index * 100}ms` }}
-              >
-                <CardContent className="p-6 sm:p-8">
-                  <div className="flex mb-4">
-                    {[...Array(testimonial.calificacion)].map((_, i) => (
-                      <Star key={i} className="w-5 h-5 fill-primary text-primary" />
+            testimonials.slice(0, 6).map((testimonial) => (
+              <Card key={testimonial.id} className="h-full">
+                <CardContent className="p-6 h-full flex flex-col">
+                  <div className="flex items-center gap-2 mb-4">
+                    {[...Array(5)].map((_, i) => (
+                      <Star
+                        key={i}
+                        className={`h-5 w-5 ${i < testimonial.rating ? 'text-yellow-400 fill-yellow-400' : 'text-gray-200'}`}
+                      />
                     ))}
                   </div>
-                  <p className="text-sm sm:text-base text-muted-foreground leading-relaxed mb-6 italic">
-                    "{testimonial.comentario}"
-                  </p>
-                  <div className="border-t border-border pt-4">
-                    <p className="font-semibold text-foreground">{testimonial.nombre}</p>
-                    <p className="text-sm text-muted-foreground">{testimonial.rol}</p>
+                  <p className="text-gray-600 mb-4 flex-grow">"{testimonial.content}"</p>
+                  <div>
+                    <p className="font-medium">{testimonial.author_name}</p>
+                    <p className="text-sm text-gray-500">{testimonial.author_role}</p>
                   </div>
                 </CardContent>
               </Card>
